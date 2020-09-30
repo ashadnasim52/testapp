@@ -33,11 +33,7 @@ import isEmail from 'validator/lib/isEmail';
 import isLength from 'validator/lib/isLength';
 import trim from 'validator/lib/trim';
 import normalizeEmail from 'validator/lib/normalizeEmail';
-
-var radio_props = [
-  {label: 'Student', value: 0},
-  {label: 'Teacher', value: 1},
-];
+import {AsyncStorage} from 'react-native';
 
 export class SignUp extends Component {
   state = {
@@ -47,26 +43,16 @@ export class SignUp extends Component {
     confirmPassword: null,
     passMatch: true,
     showpass: false,
-    value: 0,
+    profession: null,
   };
 
   signUp = async () => {
     try {
-      let {name, email, password, confirmPassword, value: role} = this.state;
+      let {name, email, password, confirmPassword, profession} = this.state;
       name = trim(name);
       email = normalizeEmail(trim(email));
       password = trim(password);
       confirmPassword = trim(confirmPassword);
-
-      console.log('roleee', role);
-
-      if (role === null) {
-        return Snackbar.show({
-          text: 'Please select your role',
-          textColor: 'white',
-          backgroundColor: 'red',
-        });
-      }
 
       if (!name || !email || !password || !confirmPassword) {
         return Snackbar.show({
@@ -94,38 +80,52 @@ export class SignUp extends Component {
           textColor: 'white',
           backgroundColor: 'red',
         });
-      this.props.signUpUser({
-        name,
-        email,
-        password,
-        confirmPassword,
-        role,
+
+      const prevCredintals = await AsyncStorage.getItem('@TEST_USERS');
+      console.log(prevCredintals);
+      if (!prevCredintals) {
+        await AsyncStorage.setItem(
+          '@TEST_USERS',
+          JSON.stringify([
+            {
+              name,
+              email,
+              password,
+              confirmPassword,
+              profession,
+            }
+          ]),
+        );
+      } else {
+        const prevCredintals_parshed= JSON.parse(prevCredintals)
+        const newList= await prevCredintals_parshed.push({
+          name,
+          email,
+          password,
+          confirmPassword,
+          profession,
+        })
+
+         await AsyncStorage.setItem(
+          '@TEST_USERS',
+          newList
+        );
+      }
+      Snackbar.show({
+        text: 'Account Created successfully',
+        textColor: 'white',
+        backgroundColor: 'red',
       });
 
-      const {signUpfetching, signUperror, signUpmessage} = this.props.auth;
+        return  this.props.navigation.navigate('SignIn');
+   
 
-      console.log(signUpfetching, signUperror, signUpmessage);
-
-      if (signUperror) {
-        this.setState({message: signUpmessage});
-        return Snackbar.show({
-          text: signUpmessage,
-          textColor: 'white',
-          backgroundColor: 'red',
-        });
-      } else {
-        Snackbar.show({
-          text: signUpmessage,
-          textColor: theme.BLUE,
-          backgroundColor: theme.ACCENT,
-        });
-        setTimeout(() => {
-          this.props.navigation.navigate('SignIn');
-        }, 1000);
-      }
+       
     } catch (error) {
       Snackbar.show({
         text: 'Something went wrong',
+        textColor: 'white',
+        backgroundColor: 'red',
       });
     }
   };
@@ -186,23 +186,6 @@ export class SignUp extends Component {
 
             <List>
               <ListItem>
-                <RadioForm
-                  formHorizontal={true}
-                  labelHorizontal={true}
-                  radio_props={radio_props}
-                  initial={0}
-                  buttonSize={10}
-                  labelStyle={{
-                    color: theme.TEXT,
-                    paddingHorizontal: 4,
-                    fontSize: 16,
-                  }}
-                  onPress={(value) => {
-                    this.setState({value: value});
-                  }}
-                />
-              </ListItem>
-              <ListItem>
                 <InputGroup>
                   <Icon name="ios-person" style={{color: '#0A69FE'}} />
                   <Input
@@ -219,6 +202,17 @@ export class SignUp extends Component {
                   <Icon name="ios-mail" style={{color: '#0A69FE'}} />
                   <Input
                     placeholder="Your Email here"
+                    onChangeText={(email) => this.setState({email})}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </InputGroup>
+              </ListItem>
+              <ListItem>
+                <InputGroup>
+                  <Icon name="ios-mail" style={{color: '#0A69FE'}} />
+                  <Input
+                    placeholder="Phone Number"
                     onChangeText={(email) => this.setState({email})}
                     keyboardType="email-address"
                     autoCapitalize="none"
@@ -301,17 +295,6 @@ export class SignUp extends Component {
               {!this.state.passMatch ? (
                 <Text style={{color: 'red'}}>Password not matched!</Text>
               ) : null}
-              <TouchableOpacity
-                onPress={() => {
-                  Linking.openURL(
-                    'https://sites.google.com/view/msyllabus/privacy-policy',
-                  );
-                }}>
-                <Text
-                  style={{color: theme.BLUE, fontSize: 14, paddingLeft: 16}}>
-                  Privacy policy
-                </Text>
-              </TouchableOpacity>
             </List>
             <Button
               full

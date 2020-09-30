@@ -34,37 +34,31 @@ import normalizeEmail from 'validator/lib/normalizeEmail';
 
 export class SignIn extends Component {
   state = {
-    email: null,
+    name: null,
     password: null,
     message: null,
   };
   doSignIn = async () => {
     try {
-      let {email, password} = this.state;
-      const {route, navigation, auth} = this.props;
-      const {fetching, isAuthenticated, error, user, message} = this.props.auth;
-      email = normalizeEmail(trim(email));
+      let {name, password} = this.state;
+      const {route, navigation} = this.props;
       password = trim(password);
-      if (!email || !password) {
+      if (!name || !password) {
         return Snackbar.show({
           text: 'Please provide all fields',
           textColor: 'white',
           backgroundColor: 'red',
         });
       }
-      if (!isEmail(email))
-        return Snackbar.show({
-          text: 'Please provide mail in correct format',
-          textColor: 'white',
-          backgroundColor: 'red',
-        });
+
       if (!isLength(password, {min: 8, max: 20}))
         return Snackbar.show({
           text: 'Password should be between 8 to 20 characters',
           textColor: 'white',
           backgroundColor: 'red',
         });
-      await this.props.signInUser(email, password);
+      // if everything works fine then
+      validateUser();
     } catch (error) {
       console.log({error});
       return Snackbar.show({
@@ -73,6 +67,43 @@ export class SignIn extends Component {
         backgroundColor: 'red',
       });
     }
+  };
+
+  validateUser = async () => {
+    const {route, navigation} = this.props;
+
+    const {name, password} = this.state;
+
+    const localUserDataString = await localStorage.getItem('@TEST_USERS');
+    console.log(localUserDataString);
+
+    if (!localUserDataString)
+      return Snackbar.show({
+        text: 'No User Found',
+        textColor: 'white',
+        backgroundColor: 'red',
+      });
+
+    const localUserData = JSON.parse(localUserDataString);
+
+    console.log(localUserData);
+
+    localUserData.forEach((user) => {
+      if (name == user.name && password == user.password) {
+        Snackbar.show({
+          text: 'Welcome',
+          textColor: 'white',
+          backgroundColor: 'black',
+        });
+        return navigation.navigate('HOME');
+      }
+    });
+
+    Snackbar.show({
+      text: 'No user found',
+      textColor: 'white',
+      backgroundColor: 'red',
+    });
   };
 
   render() {
@@ -120,9 +151,9 @@ export class SignIn extends Component {
                   <Icon name="ios-person" style={{color: '#0A69FE'}} />
                   <Input
                     onChangeText={(text) => this.setState({email: text})}
-                    value={this.state.email}
+                    value={this.state.name}
                     keyboardType="email-address"
-                    placeholder={'Your Registered Email Address'}
+                    placeholder={'Name'}
                     autoCapitalize="none"
                   />
                 </InputGroup>

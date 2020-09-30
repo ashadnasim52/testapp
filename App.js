@@ -14,34 +14,36 @@ const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <Messaging
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="SignIn"
-        screenOptions={{
-          headerTitle: (props) => <Title>Hello</Title>,
-          headerRight: () => (
-            <>
-              <Button
-                onPress={() => alert('This is a button!')}
-                title="Info"
-                color="#fff"
-              />
-              <Button
-                onPress={() => alert('This is a button!')}
-                title="Info"
-                color="#fff"
-              />
-            </>
-          ),
-        }}>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="SignIn" component={SignIn} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="HoblistWebView" component={HoblistWebView} />
-        <Stack.Screen name="CompanyInfo" component={CompanyInfo} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <Messaging />
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="SignIn"
+          screenOptions={{
+            headerTitle: (props) => <Title>Hello</Title>,
+            headerRight: () => (
+              <>
+                <Button
+                  onPress={() => alert('This is a button!')}
+                  title="Info"
+                  color="#fff"
+                />
+                <Button
+                  onPress={() => alert('This is a button!')}
+                  title="Info"
+                  color="#fff"
+                />
+              </>
+            ),
+          }}>
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="SignIn" component={SignIn} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="HoblistWebView" component={HoblistWebView} />
+          <Stack.Screen name="CompanyInfo" component={CompanyInfo} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
 };
 
