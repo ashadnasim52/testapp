@@ -58,7 +58,7 @@ export class SignIn extends Component {
           backgroundColor: 'red',
         });
       // if everything works fine then
-      validateUser();
+      this.validateUser();
     } catch (error) {
       console.log({error});
       return Snackbar.show({
@@ -100,7 +100,7 @@ export class SignIn extends Component {
     });
 
     Snackbar.show({
-      text: 'No user found',
+      text: 'invalid credentials',
       textColor: 'white',
       backgroundColor: 'red',
     });

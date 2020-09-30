@@ -9,7 +9,7 @@ import SignIn from './src/screen/SignIn';
 import SignUp from './src/screen/Signup';
 import HoblistWebView from './src/screen/HoblistWebView';
 import CompanyInfo from './src/screen/CompanyInfo';
-
+import Messaging from './src/utils/Messaging';
 const Stack = createStackNavigator();
 
 const App = () => {
