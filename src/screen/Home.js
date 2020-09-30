@@ -10,16 +10,27 @@ import {
   Icon,
   Right,
   Title,
+  Left,
+  Button,
 } from 'native-base';
+import {AsyncStorage} from 'react-native';
+
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import Axios from 'axios';
+import {post} from 'axios';
 const Home = () => {
   React.useEffect(() => {
     fetchMovies();
   }, []);
 
   const fetchMovies = async () => {
-    const {data} = await Axios.post('https://hoblist.com/movieList');
+    const {data} = await post('https://hoblist.com/movieList', {
+      params: {
+        category: 'movies',
+        language: 'telugu',
+        genre: 'all',
+        sort: 'voting',
+      },
+    });
     console.log(data);
   };
   return (
@@ -28,7 +39,9 @@ const Home = () => {
         <Grid>
           <Row>
             <View>
-              <Col>Votes</Col>
+              <Col>
+                <Text>Votes</Text>
+              </Col>
               <Col>
                 <Image
                   style={styles.tinyLogo}

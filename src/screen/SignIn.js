@@ -31,12 +31,14 @@ import isEmail from 'validator/lib/isEmail';
 import isLength from 'validator/lib/isLength';
 import trim from 'validator/lib/trim';
 import normalizeEmail from 'validator/lib/normalizeEmail';
+import {AsyncStorage} from 'react-native';
 
 export class SignIn extends Component {
   state = {
     name: null,
     password: null,
     message: null,
+    isProgess: false,
   };
   doSignIn = async () => {
     try {
@@ -71,45 +73,55 @@ export class SignIn extends Component {
 
   validateUser = async () => {
     const {route, navigation} = this.props;
+    this.setState({isProgess: true});
 
     const {name, password} = this.state;
 
-    const localUserDataString = await localStorage.getItem('@TEST_USERS');
+    const localUserDataString = await AsyncStorage.getItem('@TEST_USERS');
     console.log(localUserDataString);
 
-    if (!localUserDataString)
+    if (!localUserDataString) {
+      this.setState({isProgess: false});
       return Snackbar.show({
         text: 'No User Found',
         textColor: 'white',
         backgroundColor: 'red',
       });
+    }
 
     const localUserData = JSON.parse(localUserDataString);
 
     console.log(localUserData);
+    console.log({name, password});
 
-    localUserData.forEach((user) => {
-      if (name == user.name && password == user.password) {
-        Snackbar.show({
-          text: 'Welcome',
-          textColor: 'white',
-          backgroundColor: 'black',
-        });
-        return navigation.navigate('HOME');
-      }
-    });
+    const isMatched = await localUserData.some(
+      (user) => name == user.name && password == user.password,
+    );
 
-    Snackbar.show({
-      text: 'invalid credentials',
-      textColor: 'white',
-      backgroundColor: 'red',
-    });
+    console.log(isMatched);
+
+    if (isMatched) {
+      Snackbar.show({
+        text: 'Welcome',
+        textColor: 'white',
+        backgroundColor: 'black',
+      });
+      return navigation.navigate('Home');
+    } else {
+      Snackbar.show({
+        text: 'invalid credentials',
+        textColor: 'white',
+        backgroundColor: 'red',
+      });
+    }
+
+    this.setState({isProgess: false});
   };
 
   render() {
     const {route, navigation} = this.props;
 
-    if (fetching) {
+    if (this.state.isProgess) {
       return (
         <Container>
           <SkypeIndicator
@@ -129,30 +141,25 @@ export class SignIn extends Component {
         <Content padder>
           <ScrollView contentContainerStyle={{flexGrow: 1}}>
             <Image
-              source={require('../../assets/ic_launcher-web.png')}
+              source={require('../assets/undraw_welcome_cats_thqn.png')}
               resizeMode="contain"
               style={{
                 width: '100%',
                 height: 250,
               }}
             />
-            <Title
-              style={{
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                color: theme.ACCENT,
-                marginTop: 5,
-              }}>
-              Sign In
-            </Title>
+
             <List>
               <ListItem>
                 <InputGroup>
-                  <Icon name="ios-person" style={{color: '#0A69FE'}} />
+                  <Icon
+                    name="person-outline"
+                    type="Ionicons"
+                    style={{color: '#0A69FE'}}
+                  />
                   <Input
-                    onChangeText={(text) => this.setState({email: text})}
+                    onChangeText={(text) => this.setState({name: text})}
                     value={this.state.name}
-                    keyboardType="email-address"
                     placeholder={'Name'}
                     autoCapitalize="none"
                   />
@@ -160,7 +167,11 @@ export class SignIn extends Component {
               </ListItem>
               <ListItem>
                 <InputGroup>
-                  <Icon name="ios-unlock" style={{color: '#0A69FE'}} />
+                  <Icon
+                    name="unlock"
+                    type="Feather"
+                    style={{color: '#0A69FE'}}
+                  />
                   <Input
                     onChangeText={(text) => this.setState({password: text})}
                     value={this.state.password}
@@ -179,7 +190,11 @@ export class SignIn extends Component {
               onPress={this.doSignIn}>
               <Text>Login</Text>
             </Button>
-            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+            <TouchableOpacity
+              style={{
+                marginTop: 20,
+              }}
+              onPress={() => navigation.navigate('SignUp')}>
               <Text
                 style={{
                   textAlign: 'center',

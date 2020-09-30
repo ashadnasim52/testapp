@@ -17,7 +17,6 @@ import {
   ListItem,
   InputGroup,
   Input,
-  Icon,
   Text,
   Item,
   Button,
@@ -26,6 +25,7 @@ import {
   Content,
   H3,
   Title,
+  Icon,
 } from 'native-base';
 import Snackbar from 'react-native-snackbar';
 import {SkypeIndicator} from 'react-native-indicators';
@@ -34,6 +34,7 @@ import isLength from 'validator/lib/isLength';
 import trim from 'validator/lib/trim';
 import normalizeEmail from 'validator/lib/normalizeEmail';
 import {AsyncStorage} from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 export class SignUp extends Component {
   state = {
@@ -43,18 +44,26 @@ export class SignUp extends Component {
     confirmPassword: null,
     passMatch: true,
     showpass: false,
-    profession: null,
+    profession: 'Doctor',
+    phoneNumber: null,
   };
 
   signUp = async () => {
     try {
-      let {name, email, password, confirmPassword, profession} = this.state;
+      let {
+        name,
+        email,
+        password,
+        confirmPassword,
+        profession,
+        phoneNumber,
+      } = this.state;
       name = trim(name);
       email = normalizeEmail(trim(email));
       password = trim(password);
       confirmPassword = trim(confirmPassword);
 
-      if (!name || !email || !password || !confirmPassword) {
+      if (!name || !email || !password || !confirmPassword || !phoneNumber) {
         return Snackbar.show({
           text: 'Please provide all fields',
           textColor: 'white',
@@ -91,36 +100,45 @@ export class SignUp extends Component {
               name,
               email,
               password,
-              confirmPassword,
+              phoneNumber,
               profession,
-            }
+            },
           ]),
         );
       } else {
-        const prevCredintals_parshed= JSON.parse(prevCredintals)
-        const newList= await prevCredintals_parshed.push({
-          name,
-          email,
-          password,
-          confirmPassword,
-          profession,
-        })
+        const prevCredintals_parshed = JSON.parse(prevCredintals);
+        console.log(prevCredintals_parshed);
+        // const newList = await .push({
+        //   name,
+        //   email,
+        //   password,
+        //   phoneNumber,
+        //   profession,
+        // });
+        // console.log(newList);
 
-         await AsyncStorage.setItem(
+        await AsyncStorage.setItem(
           '@TEST_USERS',
-          newList
+          JSON.stringify([
+            ...prevCredintals_parshed,
+            {
+              name,
+              email,
+              password,
+              phoneNumber,
+              profession,
+            },
+          ]),
         );
+
+        Snackbar.show({
+          text: 'Account Created successfully',
+          textColor: 'white',
+          backgroundColor: 'red',
+        });
+
+        return this.props.navigation.navigate('SignIn');
       }
-      Snackbar.show({
-        text: 'Account Created successfully',
-        textColor: 'white',
-        backgroundColor: 'red',
-      });
-
-        return  this.props.navigation.navigate('SignIn');
-   
-
-       
     } catch (error) {
       Snackbar.show({
         text: 'Something went wrong',
@@ -147,47 +165,80 @@ export class SignUp extends Component {
   render() {
     const {route, navigation, auth} = this.props;
 
-    if (auth.signUpfetching) {
-      return (
-        <Container>
-          <SkypeIndicator
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignSelf: 'center',
-            }}
-            color="#ffa41b"
-          />
-        </Container>
-      );
-    }
-
     return (
       <Container>
         <Content padder>
           <ScrollView contentContainerStyle={{flexGrow: 1}}>
             <Image
-              source={require('../../assets/ic_launcher-web.png')}
+              source={require('../assets/coffee_lover_outline.png')}
               resizeMode="contain"
               style={{
                 width: '100%',
-                height: 200,
+                height: 100,
               }}
             />
-            <Title
-              style={{
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                color: theme.ACCENT,
-                marginTop: 5,
-              }}>
-              Sign Up
-            </Title>
 
             <List>
+              <DropDownPicker
+                items={[
+                  {
+                    label: 'Doctor',
+                    value: 'Doctor',
+                    icon: () => (
+                      <Icon
+                        name="work"
+                        type="MaterialIcons"
+                        size={18}
+                        style={{color: '#0A69FE'}}
+                      />
+                    ),
+                  },
+                  {
+                    label: 'Carpenter',
+                    value: 'Carpenter',
+                    icon: () => (
+                      <Icon
+                        name="work"
+                        type="MaterialIcons"
+                        size={18}
+                        style={{color: '#0A69FE'}}
+                      />
+                    ),
+                  },
+                  {
+                    label: 'Engineer',
+                    value: 'Engineer',
+                    icon: () => (
+                      <Icon
+                        name="work"
+                        type="MaterialIcons"
+                        size={18}
+                        style={{color: '#0A69FE'}}
+                      />
+                    ),
+                  },
+                ]}
+                defaultValue={this.state.profession}
+                containerStyle={{}}
+                style={{backgroundColor: '#fafafa'}}
+                itemStyle={{
+                  justifyContent: 'flex-start',
+                }}
+                dropDownStyle={{backgroundColor: '#fafafa'}}
+                onChangeItem={(item) =>
+                  this.setState({
+                    profession: item.value,
+                  })
+                }
+              />
+
               <ListItem>
                 <InputGroup>
-                  <Icon name="ios-person" style={{color: '#0A69FE'}} />
+                  <Icon
+                    name="person-outline"
+                    type="Ionicons"
+                    style={{color: '#0A69FE'}}
+                  />
                   <Input
                     keyboardType="default"
                     placeholder="Name"
@@ -199,7 +250,7 @@ export class SignUp extends Component {
               </ListItem>
               <ListItem>
                 <InputGroup>
-                  <Icon name="ios-mail" style={{color: '#0A69FE'}} />
+                  <Icon name="mail" type="Feather" style={{color: '#0A69FE'}} />
                   <Input
                     placeholder="Your Email here"
                     onChangeText={(email) => this.setState({email})}
@@ -210,11 +261,14 @@ export class SignUp extends Component {
               </ListItem>
               <ListItem>
                 <InputGroup>
-                  <Icon name="ios-mail" style={{color: '#0A69FE'}} />
+                  <Icon
+                    name="phone"
+                    type="Feather"
+                    style={{color: '#0A69FE'}}
+                  />
                   <Input
                     placeholder="Phone Number"
-                    onChangeText={(email) => this.setState({email})}
-                    keyboardType="email-address"
+                    onChangeText={(phoneNumber) => this.setState({phoneNumber})}
                     autoCapitalize="none"
                   />
                 </InputGroup>
@@ -222,7 +276,11 @@ export class SignUp extends Component {
 
               <ListItem>
                 <InputGroup>
-                  <Icon name="ios-unlock" style={{color: '#0A69FE'}} />
+                  <Icon
+                    name="unlock"
+                    type="Feather"
+                    style={{color: '#0A69FE'}}
+                  />
                   <Input
                     onChangeText={(text) =>
                       this.setState({password: text}, () => {
@@ -259,7 +317,11 @@ export class SignUp extends Component {
 
               <ListItem>
                 <InputGroup>
-                  <Icon name="ios-unlock" style={{color: '#0A69FE'}} />
+                  <Icon
+                    name="unlock"
+                    type="Feather"
+                    style={{color: '#0A69FE'}}
+                  />
                   <Input
                     onChangeText={(text) =>
                       this.setState({confirmPassword: text}, () => {

@@ -9,50 +9,100 @@ import {
   Text,
   Icon,
   Right,
+  Left,
+  H1,
 } from 'native-base';
 
 const CompanyInfo = () => {
   return (
-    <Content>
-      <Card>
-        <CardItem>
-          <Left>
-            <Icon active name="logo-googleplus" />
+    <Container>
+      <Content padder contentContainerStyle={{}}>
+        <H1
+          style={{
+            textAlign: 'center',
+            marginTop: 40,
+            marginBottom: 40,
+            color: '#0A69FE',
+          }}>
+          Company Details
+        </H1>
+        <Card style={{}}>
+          <CardItem>
+            <Icon
+              style={{color: '#0A69FE'}}
+              fontSize={12}
+              name="shop"
+              type="Entypo"
+            />
             <Text>Company</Text>
-          </Left>
-          <Right>
-            <Text>Geeksynergy Technologies Pvt Ltd</Text>
-          </Right>
-        </CardItem>
-        <CardItem>
-          <Left>
-            <Icon active name="logo-googleplus" />
+
+            <Right>
+              <Text
+                style={{
+                  textAlign: 'center',
+                }}>
+                Geeksynergy Technologies Pvt Ltd
+              </Text>
+            </Right>
+          </CardItem>
+          <CardItem>
+            <Icon
+              style={{color: '#0A69FE'}}
+              name="address-book"
+              type="FontAwesome"
+              fontSize={12}
+            />
             <Text>Address</Text>
-          </Left>
-          <Right>
-            <Text>Sanjayanagar, Bengaluru-56</Text>
-          </Right>
-        </CardItem>
-        <CardItem>
-          <Left>
-            <Icon active name="logo-googleplus" />
+
+            <Right>
+              <Text
+                style={{
+                  textAlign: 'center',
+                }}>
+                Sanjayanagar, Bengaluru-56
+              </Text>
+            </Right>
+          </CardItem>
+          <CardItem>
+            <Icon
+              fontSize={12}
+              style={{color: '#0A69FE'}}
+              name="phone"
+              type="Feather"
+            />
             <Text>Phone</Text>
-          </Left>
-          <Right>
-            <Text>XXXXXXXXX09</Text>
-          </Right>
-        </CardItem>
-        <CardItem>
-          <Left>
-            <Icon active name="logo-googleplus" />
+
+            <Right>
+              <Text
+                style={{
+                  textAlign: 'center',
+                }}>
+                {' '}
+                XXXXXXXXX09
+              </Text>
+            </Right>
+          </CardItem>
+          <CardItem>
+            <Icon
+              fontSize={12}
+              style={{color: '#0A69FE'}}
+              name="mail"
+              type="Feather"
+            />
             <Text>Email</Text>
-          </Left>
-          <Right>
-            <Text>XXXXXX@gmail.com</Text>
-          </Right>
-        </CardItem>
-      </Card>
-    </Content>
+
+            <Right>
+              <Text
+                style={{
+                  textAlign: 'center',
+                }}>
+                XXXXXX@gmail.com
+              </Text>
+            </Right>
+          </CardItem>
+        </Card>
+      </Content>
+    </Container>
   );
 };
 

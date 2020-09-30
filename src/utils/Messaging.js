@@ -3,11 +3,8 @@ import {View, Text, Alert} from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import DropdownAlert from 'react-native-dropdownalert';
 import Axios from 'axios';
-import {useDispatch} from 'react-redux';
 
 const Messaging = () => {
-  const dispatch = useDispatch();
-
   dropDownAlertRef = null;
   async function registerAppWithFCM() {
     try {
@@ -29,10 +26,7 @@ const Messaging = () => {
     try {
       const token = await messaging().getToken();
       console.log('token of user is ' + token);
-      dispatch({
-        type: SET_TOKEN,
-        payload: token,
-      });
+
       await requestPermission();
       await registerAppWithFCM();
       await messaging().setBackgroundMessageHandler(async (remoteMessage) => {
