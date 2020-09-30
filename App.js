@@ -14,6 +14,7 @@ const Stack = createStackNavigator();
 
 const App = () => {
   return (
+    <Messaging
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="SignIn"
